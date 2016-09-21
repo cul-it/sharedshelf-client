@@ -1,0 +1,40 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Simple client for ARTstor Shared Shelf API
+ */
+
+/*
+
+Defining Connection types
+=========================
+
+To define your own connection type, you need:
+
+- an implementation of hook_clients_connection_type_info().
+- a class definition for your connection type. This should be named
+  'clients_connection_YOUR_TYPE_ID' and implement the following methods:
+  - connectionSettingsForm(), which should return a FormAPI array for your
+    connection type's edit form.
+  - connectionSettingsForm_submit(), which should provide any processing of
+    the form specific to your connection type.
+  - callMethodArray(), which should call a remote method and return the result.
+
+*/
+
+/**
+ * Implements hook_clients_connection_type_info().
+ *
+ * Define the connection types we provide.
+ */
+function sharedshelf_clients_connection_type_info() {
+  return array(
+    // Key by machine name. Used as the base for hooks.
+    'shared_shelf' => array(
+      'label' => t('ARTstor Shared Shelf'), // Human-readable label.
+    ),
+  );
+}
+

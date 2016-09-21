@@ -1,0 +1,8 @@
+; $Id$
+name = "Shared Shelf"
+description = "Simple client for ARTstor Shared Shelf API"
+package = Cornell University Library
+core = 7.x
+dependencies[] = clients
+
+files[] = sharedshelf.inc
