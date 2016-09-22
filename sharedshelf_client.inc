@@ -158,7 +158,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
    * @see clients_connection_form()
    * @see clients_connection_form_submit()
    */
-  function connectionSettingsForm(&$form_state) {
+  function connectionSettingsFormAlter(&$form_state) {
     $form = array();
 
     $form['endpoint'] = array(
