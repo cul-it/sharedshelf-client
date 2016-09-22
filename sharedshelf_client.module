@@ -32,7 +32,7 @@ To define your own connection type, you need:
 function sharedshelf_client_clients_connection_type_info() {
   return array(
     // Key by machine name. Used as the base for hooks.
-    'shared_shelf' => array(
+    'sharedshelf_client' => array(
       'label' => t('ARTstor Shared Shelf'), // Human-readable label.
     ),
   );

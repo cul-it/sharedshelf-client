@@ -7,7 +7,7 @@
 /**
  * Base class for Drupal client connections.
  */
-class clients_connection_shared_shelf extends clients_connection_base {
+class clients_connection_sharedshelf_client extends clients_connection_base {
   // ============================================ Base: Constructor.
   /**
    * Constructor method.
@@ -16,8 +16,8 @@ class clients_connection_shared_shelf extends clients_connection_base {
    *  An object of class stdClass returned from CTools.
    */
 
-  private $cookie_file = '/tmp/clients_connection_shared_shelf_cookie.txt';
-  private $cookie_jar_file = '/tmp/clients_connection_shared_shelf_cookie.txt';
+  private $cookie_file = '/tmp/clients_connection_sharedshelf_client_cookie.txt';
+  private $cookie_jar_file = '/tmp/clients_connection_sharedshelf_client_cookie.txt';
 
   function __construct($object) {
     // Call the base class to set the connection properties.
