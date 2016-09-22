@@ -24,7 +24,7 @@ class clients_connection_shared_shelf extends clients_connection_base {
     parent::__construct($object);
 
     // Decrypt the password.
-    if (!function_exists(clients_drupal_decrypt)) {
+    if (!function_exists('clients_drupal_decrypt')) {
       module_load_include('module', 'clients', 'connections/clients_drupal/clients_drupal');
     }
     $this->configuration['password'] = clients_drupal_decrypt($this->configuration['password']);
