@@ -211,21 +211,23 @@ class clients_connection_shared_shelf extends clients_connection_base {
    * @see clients_connection_form_submit()
    */
   function connectionSettingsForm_submit($form, &$form_state) {
-    $old_connection = $form_state['values']['old_connection'];
+    if (isset($form_state['values']['old_connection'])) {
+      $old_connection = $form_state['values']['old_connection'];
 
-    // Check whether we're editing or adding a new connection.
-    if ($old_connection->new) {
-      //jgrtest $form_state['values']['configuration']['password'] = clients_drupal_encrypt($form_state['values']['configuration']['password']);
-      $form_state['values']['configuration']['password'] = $form_state['values']['configuration']['password'];
-    }
-    else {
-      // Prepare password for serialized storage
-      if (empty($form_state['values']['configuration']['password'])) {
-        // Set password to original if blank.
-        $form_state['values']['configuration']['password'] = $old_connection->configuration['password'];
+      // Check whether we're editing or adding a new connection.
+      if ($old_connection->new) {
+        //jgrtest $form_state['values']['configuration']['password'] = clients_drupal_encrypt($form_state['values']['configuration']['password']);
+        $form_state['values']['configuration']['password'] = $form_state['values']['configuration']['password'];
       }
-      //jgrtest $form_state['values']['configuration']['password'] = clients_drupal_encrypt($form_state['values']['configuration']['password']);
-      $form_state['values']['configuration']['password'] = $form_state['values']['configuration']['password'];
+      else {
+        // Prepare password for serialized storage
+        if (empty($form_state['values']['configuration']['password'])) {
+          // Set password to original if blank.
+          $form_state['values']['configuration']['password'] = $old_connection->configuration['password'];
+        }
+        //jgrtest $form_state['values']['configuration']['password'] = clients_drupal_encrypt($form_state['values']['configuration']['password']);
+        $form_state['values']['configuration']['password'] = $form_state['values']['configuration']['password'];
+      }
     }
   }
 
