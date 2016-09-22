@@ -29,7 +29,7 @@ To define your own connection type, you need:
  *
  * Define the connection types we provide.
  */
-function sharedshelf_clients_connection_type_info() {
+function sharedshelf_client_clients_connection_type_info() {
   return array(
     // Key by machine name. Used as the base for hooks.
     'shared_shelf' => array(
