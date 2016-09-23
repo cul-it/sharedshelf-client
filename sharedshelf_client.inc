@@ -81,7 +81,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       drupal_set_message(t('Could not connect to the remote site, got error message "@message".', array(
         '@message' => $e->getMessage(),
       )), 'warning');
-      //dsm($e);
+      //dpm($e);
 
       return;
     }
@@ -111,7 +111,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       drupal_set_message(t('Could not log in to the remote site, got error message "@message".', array(
         '@message' => $e->getMessage(),
       )), 'warning');
-      //dsm($e);
+      //dpm($e);
 
       return;
     }
@@ -133,7 +133,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       drupal_set_message(t('Could not log out of the remote site, got error message "@message".', array(
         '@message' => $e->getMessage(),
       )), 'warning');
-      //dsm($e);
+      //dpm($e);
 
       return;
     }
@@ -211,7 +211,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
    * @see clients_connection_form_submit()
    */
   function connectionSettingsForm_submit($form, &$form_state) {
-    dsm($form_state, "form state connectionSettingsForm_submit")
+    dpm($form_state, "form state connectionSettingsForm_submit");
     if (isset($form_state['values']['old_connection'])) {
       $old_connection = $form_state['values']['old_connection'];
 
@@ -311,7 +311,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
         break;
 
       default :
-        dsm('strange method for callMethodArray: ' . $method);
+        dpm('strange method for callMethodArray: ' . $method);
         break;
     }
 
@@ -364,7 +364,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
     // $params is key => value array
     $postfields = http_build_query($params);
     $url = $this->endpoint . "/$path?$getfields";
-    dsm($url);
+    dpm($url);
     $ch = curl_init($url);
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
