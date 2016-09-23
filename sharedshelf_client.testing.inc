@@ -52,7 +52,7 @@ class ClientsConnectionSSTestConnect implements ClientsConnectionTestingInterfac
       return;
     }
 
-    if (is_array($connect) && isset($connect['user'])) {
+    if (is_array($connect) && isset($connect['logged_in'])) {
       drupal_set_message(t('Sucessfully connected to the remote site.'));
     }
     else {
