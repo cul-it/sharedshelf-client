@@ -202,8 +202,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       '#description' => $password_desc,
       '#required' => $is_new,
     );
-
-    return $form;
   }
 
   /**
