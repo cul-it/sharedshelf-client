@@ -210,7 +210,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
    * @see clients_connection_form_submit()
    */
   function connectionSettingsForm_submit($form, &$form_state) {
-    dpm($form_state, "form state connectionSettingsForm_submit");
     if (isset($form_state['values']['old_connection'])) {
       $old_connection = $form_state['values']['old_connection'];
 
