@@ -58,6 +58,7 @@ function sharedshelf_client_client_connection_tests_alter(&$tests, $connection) 
   // Add a test to all connections of a specific type.
   if ($connection->type == 'sharedshelf_client') {
     $tests['my_test'] = 'ClientsConnectionSSTestConnect';
+    $tests['my_login'] ='ClientsConnectionSSTestLogin';
   }
   // Add a test to a single connection.
   if ($connection->name == 'bizbax') {
