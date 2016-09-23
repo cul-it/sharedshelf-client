@@ -257,6 +257,8 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       return;
     }
 
+    dpm($method, "called callMethodArray");
+
     $params = array();
 
     switch ($method) {
