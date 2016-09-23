@@ -56,8 +56,8 @@ function sharedshelf_client_clients_connection_type_info() {
 function sharedshelf_client_client_connection_tests_alter(&$tests, $connection) {
   dpm($connection,'sharedshelf_client_client_connection_tests_alter');
   // Add a test to all connections of a specific type.
-  if ($connection->type == 'foobar') {
-    $tests['my_test'] = 'MyTestClass';
+  if ($connection->type == 'sharedshelf_client') {
+    $tests['my_test'] = 'ClientsConnectionSSTestConnect';
   }
   // Add a test to a single connection.
   if ($connection->name == 'bizbax') {
