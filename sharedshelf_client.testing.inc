@@ -126,8 +126,8 @@ class ClientsConnectionSSTestLogout implements ClientsConnectionTestingInterface
    */
   function testLabels() {
     return array(
-      'label' => t('Test login'),
-      'description' => t('Test the basic connection to the site by calling user.login.'),
+      'label' => t('Test logout'),
+      'description' => t('Test the logout from the site by calling user.login.'),
       'button' => t('Log in'),
     );
   }
