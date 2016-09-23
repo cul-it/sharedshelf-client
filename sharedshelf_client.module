@@ -54,11 +54,11 @@ function sharedshelf_client_clients_connection_type_info() {
  *  for example, by comparing it to the connection your module is set up to use.
  */
 function sharedshelf_client_client_connection_tests_alter(&$tests, $connection) {
-  dpm($connection,'sharedshelf_client_client_connection_tests_alter');
   // Add a test to all connections of a specific type.
   if ($connection->type == 'sharedshelf_client') {
     $tests['ss_connect'] = 'ClientsConnectionSSTestConnect';
     $tests['ss_login'] ='ClientsConnectionSSTestLogin';
+    $tests['ss_logout'] ='ClientsConnectionSSTestLogout';
   }
   // Add a test to a single connection.
   if ($connection->name == 'bizbax') {

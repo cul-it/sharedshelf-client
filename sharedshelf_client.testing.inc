@@ -115,3 +115,53 @@ class ClientsConnectionSSTestLogin implements ClientsConnectionTestingInterface 
 
 }
 
+
+/**
+ * Test login to a Drupal Services connection.
+ */
+class ClientsConnectionSSTestLogout implements ClientsConnectionTestingInterface {
+
+  /**
+   * The labels for the test.
+   */
+  function testLabels() {
+    return array(
+      'label' => t('Test login'),
+      'description' => t('Test the basic connection to the site by calling user.login.'),
+      'button' => t('Log in'),
+    );
+  }
+
+  /**
+   * Connection test button handler: basic connection.
+   */
+  function test($connection, &$button_form_values) {
+    try {
+      // Call the login method.
+      $login = $connection->callMethodArray('user.logout');
+      // Eep. we need user details!!!
+      dpm($login, 'login result');
+    }
+    catch (Exception $e) {
+      drupal_set_message(t('Could not log out of the remote site, got error message "@message".', array(
+        '@message' => $e->getMessage(),
+      )), 'warning');
+      //dsm($e);
+
+      return;
+    }
+
+    if (is_array($login) && isset($login['logged_in'])) {
+      drupal_set_message(t('Sucessfully logged in to the remote site; got back details for user %user (profile @uid).', array(
+        '%user' => $login['username'],
+        '@uid'  => $login['profile_id'],
+        )));
+    }
+    else {
+      drupal_set_message(t('Could not log out of the remote site.'), 'warning');
+    }
+
+    return $login;
+  }
+
+}
