@@ -19,17 +19,17 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
   private $cookie_file = '/tmp/clients_connection_sharedshelf_client_cookie.txt';
   private $cookie_jar_file = '/tmp/clients_connection_sharedshelf_client_cookie.txt';
 
-  function __construct($object) {
-    // Call the base class to set the connection properties.
-    parent::__construct($object);
+  // function __construct($object) {
+  //   // Call the base class to set the connection properties.
+  //   parent::__construct($object);
 
-    // Decrypt the password.
-    if (!function_exists('clients_drupal_decrypt')) {
-      module_load_include('module', 'clients', 'connections/clients_drupal/clients_drupal');
-    }
-    $this->configuration['password'] = clients_drupal_decrypt($this->configuration['password']);
-    dpm($this, "clients_connection_sharedshelf_client");
-  }
+  //   // Decrypt the password.
+  //   if (!function_exists('clients_drupal_decrypt')) {
+  //     module_load_include('module', 'clients', 'connections/clients_drupal/clients_drupal');
+  //   }
+  //   $this->configuration['password'] = clients_drupal_decrypt($this->configuration['password']);
+  //   dpm($this, "clients_connection_sharedshelf_client");
+  // }
 
   // ============================================ Base: Testing system.
   /**
