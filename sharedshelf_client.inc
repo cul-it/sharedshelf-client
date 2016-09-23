@@ -159,12 +159,13 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
    * @see clients_connection_form_submit()
    */
   function connectionSettingsFormAlter(&$form, &$form_state) {
-    //$form = array();
+
+    $is_new = isset($this->is_new) && $this->is_new;
 
     $form['endpoint'] = array(
       '#type' => 'textfield',
       '#title' => t('Connection endpoint'),
-      '#default_value' => $this->is_new ? '' : $this->endpoint,
+      '#default_value' => $is_new ? '' : $this->endpoint,
       '#size' => 50,
       '#maxlength' => 100,
       '#description' => t('Remote service URL e.g. http://catalog.stage3.sharedshelf.artstor.org'),
@@ -181,7 +182,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
     $form['configuration']['username'] = array(
       '#type' => 'textfield',
       '#title' => t('ARTstor email'),
-      '#default_value' => $this->is_new ? '' : $this->configuration['username'],
+      '#default_value' => $is_new ? '' : $this->configuration['username'],
       '#size' => 30,
       '#maxlength' => 60,
       '#attributes' => array('autocomplete' => 'off'),
@@ -189,7 +190,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       '#required' => TRUE,
     );
 
-    $password_desc = $this->is_new
+    $password_desc = $is_new
       ? t('This should be same as the password on the server you are connecting to.')
       : t('This should be same as the password on the server you are connecting to. Leave blank unless you need to change this.');
     $form['configuration']['password'] = array(
@@ -199,7 +200,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       '#maxlength' => 60,
       '#attributes' => array('autocomplete' => 'off'),
       '#description' => $password_desc,
-      '#required' => $this->is_new,
+      '#required' => $is_new,
     );
 
     return $form;
