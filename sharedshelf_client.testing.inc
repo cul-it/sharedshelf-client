@@ -47,12 +47,10 @@ class ClientsConnectionSSTestConnect implements ClientsConnectionTestingInterfac
       drupal_set_message(t('Could not connect to the remote site, got error message "@message".', array(
         '@message' => $e->getMessage(),
       )), 'warning');
-      //dsm($e);
-
       return;
     }
 
-    if (is_array($connect) && isset($connect['logged_in'])) {
+    if (is_array($connect) && isset($connect['logged_in']) && $connect['logged_in'] === true) {
       drupal_set_message(t('Sucessfully connected to the remote site.'));
     }
     else {
@@ -82,7 +80,7 @@ class ClientsConnectionSSTestLogin implements ClientsConnectionTestingInterface 
   }
 
   /**
-   * Connection test button handler: basic connection.
+   * Connection test button handler: user login.
    */
   function test($connection, &$button_form_values) {
     try {
@@ -100,7 +98,7 @@ class ClientsConnectionSSTestLogin implements ClientsConnectionTestingInterface 
       return;
     }
 
-    if (is_array($login) && isset($login['logged_in'])) {
+    if (is_array($login) && isset($login['success']) && $login['success'] === true) {
       drupal_set_message(t('Sucessfully logged in to the remote site; got back details for user %user (profile @uid).', array(
         '%user' => $login['username'],
         '@uid'  => $login['profile_id'],
@@ -127,8 +125,8 @@ class ClientsConnectionSSTestLogout implements ClientsConnectionTestingInterface
   function testLabels() {
     return array(
       'label' => t('Test logout'),
-      'description' => t('Test the logout from the site by calling user.login.'),
-      'button' => t('Log in'),
+      'description' => t('Test the logout from the site by calling user.logout.'),
+      'button' => t('Log out'),
     );
   }
 
@@ -151,11 +149,8 @@ class ClientsConnectionSSTestLogout implements ClientsConnectionTestingInterface
       return;
     }
 
-    if (is_array($login) && isset($login['logged_in'])) {
-      drupal_set_message(t('Sucessfully logged in to the remote site; got back details for user %user (profile @uid).', array(
-        '%user' => $login['username'],
-        '@uid'  => $login['profile_id'],
-        )));
+    if (is_array($login) && isset($login['success']) && $login['success'] === true) {
+      drupal_set_message(t('Sucessfully logged out of the remote site.'));
     }
     else {
       drupal_set_message(t('Could not log out of the remote site.'), 'warning');
