@@ -100,10 +100,10 @@ class ClientsConnectionSSTestLogin implements ClientsConnectionTestingInterface 
       return;
     }
 
-    if (is_array($login) && isset($login['user'])) {
-      drupal_set_message(t('Sucessfully logged in to the remote site; got back details for user %user (uid @uid).', array(
-        '%user' => $login['user']['name'],
-        '@uid'  => $login['user']['uid'],
+    if (is_array($login) && isset($login['logged_in'])) {
+      drupal_set_message(t('Sucessfully logged in to the remote site; got back details for user %user (profile @uid).', array(
+        '%user' => $login['username'],
+        '@uid'  => $login['profile_id'],
         )));
     }
     else {
