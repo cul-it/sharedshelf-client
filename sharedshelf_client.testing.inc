@@ -89,7 +89,7 @@ class ClientsConnectionSSTestLogin implements ClientsConnectionTestingInterface 
       // Call the login method.
       $login = $connection->callMethodArray('user.login');
       // Eep. we need user details!!!
-      dpm($login);
+      dpm($login, 'login result');
     }
     catch (Exception $e) {
       drupal_set_message(t('Could not log in to the remote site, got error message "@message".', array(
