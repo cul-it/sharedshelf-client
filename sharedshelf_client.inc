@@ -315,7 +315,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
         break;
     }
 
-    return json_decode($result);
+    return json_decode($result, true);
   }
 
   private function post($path = 'account', $params = array()) {
