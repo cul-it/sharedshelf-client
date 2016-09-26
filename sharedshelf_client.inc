@@ -259,6 +259,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
     }
 
     $params = array();
+    $result = '';
 
     switch ($method) {
       case 'user.login':
@@ -314,7 +315,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
         break;
     }
 
-    return $result;
+    return json_decode($result);
   }
 
   private function post($path = 'account', $params = array()) {
