@@ -135,7 +135,7 @@ class ClientsConnectionSSTestLogout implements ClientsConnectionTestingInterface
   function test($connection, &$button_form_values) {
     try {
       // Call the login method.
-      $login = $connection->callMethodArray('user.logout');
+      $logout = $connection->callMethodArray('user.logout');
       // Eep. we need user details!!!
     }
     catch (Exception $e) {
@@ -147,14 +147,14 @@ class ClientsConnectionSSTestLogout implements ClientsConnectionTestingInterface
       return;
     }
 
-    if (is_array($login) && isset($login['success']) && $login['success'] === true) {
+    if (is_array($logout) && isset($logout['success']) && $logout['success'] === true) {
       drupal_set_message(t('Sucessfully logged out of the remote site.'));
     }
     else {
       drupal_set_message(t('Could not log out of the remote site.'), 'warning');
     }
 
-    return $login;
+    return $logout;
   }
 
 }
