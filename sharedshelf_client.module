@@ -60,8 +60,4 @@ function sharedshelf_client_client_connection_tests_alter(&$tests, $connection) 
     $tests['ss_login'] ='ClientsConnectionSSTestLogin';
     $tests['ss_logout'] ='ClientsConnectionSSTestLogout';
   }
-  // Add a test to a single connection.
-  if ($connection->name == 'bizbax') {
-    $tests['my_other_test'] = 'MyOtherTestClass';
-  }
 }

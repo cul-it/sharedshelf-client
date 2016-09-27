@@ -63,6 +63,14 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       '#action_submit' => 'testConnectionLogout',
       '#description' => t('Test the remote user settings and by calling user.logout on the remote server.'),
     );
+    $buttons['reset'] = array(
+      '#value' => t('Reset the HTTP request status'),
+      '#type' => 'submit',
+      //'#name' => 'login',
+      '#action_type' => 'method',
+      '#action_submit' => 'testConnectionResetHttpRequest',
+      '#description' => t('Reset the HTTP request status so Drupal can make HTTP requests.'),
+    );
     return $buttons;
   }
 
@@ -131,6 +139,28 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
     }
     catch (Exception $e) {
       drupal_set_message(t('Could not log out of the remote site, got error message "@message".', array(
+        '@message' => $e->getMessage(),
+      )), 'warning');
+      //dpm($e);
+
+      return;
+    }
+    return $login;
+  }
+
+  /**
+   * Connection test button handler: reset the HTTP request status.
+   */
+  function testConnectionResetHttpRequest(&$button_form_values) {
+    try {
+      // Handle the situation where this message shows up:
+      //  Drupal is unable to make HTTP requests. Please reset the HTTP request status.
+      //  see https://www.drupal.org/node/1186572
+      variable_del('drupal_http_request_fails');
+      $login = '';
+    }
+    catch (Exception $e) {
+      drupal_set_message(t('Could not reset the HTTP request status, got error message "@message".', array(
         '@message' => $e->getMessage(),
       )), 'warning');
       //dpm($e);
