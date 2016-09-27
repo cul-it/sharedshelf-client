@@ -158,3 +158,41 @@ class ClientsConnectionSSTestLogout implements ClientsConnectionTestingInterface
   }
 
 }
+
+
+/**
+ * Test http requests reset.
+ */
+class ClientsConnectionSSTestReset implements ClientsConnectionTestingInterface {
+
+  /**
+   * The labels for the test.
+   */
+  function testLabels() {
+    return array(
+      'label' => t('Reset the HTTP request status'),
+      'description' => t('Handle this message: Drupal is unable to make HTTP requests. Please reset the HTTP request status.'),
+      'button' => t('Reset'),
+    );
+  }
+
+  /**
+   * Connection test button handler: basic connection.
+   */
+  function test($connection, &$button_form_values) {
+    try {
+      variable_del('drupal_http_request_fails');
+      $logout = '';
+    }
+    catch (Exception $e) {
+      drupal_set_message(t('Could not reset the HTTP request status, got error message "@message".', array(
+        '@message' => $e->getMessage(),
+      )), 'warning');
+      //dsm($e);
+
+      return;
+    }
+    return $logout;
+  }
+
+}

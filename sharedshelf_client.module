@@ -59,5 +59,6 @@ function sharedshelf_client_client_connection_tests_alter(&$tests, $connection) 
     $tests['ss_connect'] = 'ClientsConnectionSSTestConnect';
     $tests['ss_login'] ='ClientsConnectionSSTestLogin';
     $tests['ss_logout'] ='ClientsConnectionSSTestLogout';
+    $tests['ss_reset_http'] = 'ClientsConnectionSSTestReset';
   }
 }
