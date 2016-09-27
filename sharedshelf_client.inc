@@ -63,6 +63,14 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       '#action_submit' => 'testConnectionLogout',
       '#description' => t('Test the remote user settings and by calling user.logout on the remote server.'),
     );
+    $buttons['reset'] = array(
+      '#value' => t('Reset the HTTP request status'),
+      '#type' => 'submit',
+      //'#name' => 'login',
+      '#action_type' => 'method',
+      '#action_submit' => 'testConnectionResetHttpRequest',
+      '#description' => t('Reset the HTTP request status so Drupal can make HTTP requests.'),
+    );
     return $buttons;
   }
 
