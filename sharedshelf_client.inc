@@ -392,7 +392,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
   private function get($path = 'account', $params = array()) {
     // $path is part of endpoint url after .../artstor.org/
     // $params is key => value array
-    $postfields = http_build_query($params);
+    $getfields = http_build_query($params);
     $url = $this->endpoint . "/$path?$getfields";
     //dpm($url);
     $ch = curl_init($url);
