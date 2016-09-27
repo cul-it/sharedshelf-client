@@ -6,3 +6,4 @@ core = 7.x
 dependencies[] = clients
 
 files[] = sharedshelf_client.inc
+files[] = sharedshelf_client.testing.inc

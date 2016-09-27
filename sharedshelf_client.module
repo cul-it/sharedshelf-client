@@ -32,9 +32,33 @@ To define your own connection type, you need:
 function sharedshelf_client_clients_connection_type_info() {
   return array(
     // Key by machine name. Used as the base for hooks.
-    'shared_shelf' => array(
+    'sharedshelf_client' => array(
       'label' => t('ARTstor Shared Shelf'), // Human-readable label.
     ),
   );
 }
 
+
+/**
+ * Add or alter connection tests.
+ *
+ * Implements hook_client_connection_tests_alter().
+ *
+ * This allows site-specific tests to be added to the UI.
+ *
+ * @param $tests
+ *  The array of tests as returned by hook_clients_connection_type_info(). May
+ *  be empty.
+ * @param $connection
+ *  The current connection. Use this to determine whether to add any tests;
+ *  for example, by comparing it to the connection your module is set up to use.
+ */
+function sharedshelf_client_client_connection_tests_alter(&$tests, $connection) {
+  // Add a test to all connections of a specific type.
+  if ($connection->type == 'sharedshelf_client') {
+    $tests['ss_connect'] = 'ClientsConnectionSSTestConnect';
+    $tests['ss_login'] ='ClientsConnectionSSTestLogin';
+    $tests['ss_logout'] ='ClientsConnectionSSTestLogout';
+    $tests['ss_reset_http'] = 'ClientsConnectionSSTestReset';
+  }
+}

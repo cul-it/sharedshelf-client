@@ -7,7 +7,7 @@
 /**
  * Base class for Drupal client connections.
  */
-class clients_connection_shared_shelf extends clients_connection_base {
+class clients_connection_sharedshelf_client extends clients_connection_base {
   // ============================================ Base: Constructor.
   /**
    * Constructor method.
@@ -16,20 +16,20 @@ class clients_connection_shared_shelf extends clients_connection_base {
    *  An object of class stdClass returned from CTools.
    */
 
-  private $cookie_file = '/tmp/clients_connection_shared_shelf_cookie.txt';
-  private $cookie_jar_file = '/tmp/clients_connection_shared_shelf_cookie.txt';
+  private $cookie_file = '/tmp/clients_connection_sharedshelf_client_cookie.txt';
+  private $cookie_jar_file = '/tmp/clients_connection_sharedshelf_client_cookie.txt';
 
-  function __construct($object) {
-    // Call the base class to set the connection properties.
-    parent::__construct($object);
+  // function __construct($object) {
+  //   // Call the base class to set the connection properties.
+  //   parent::__construct($object);
 
-    // Decrypt the password.
-    if (!function_exists(clients_drupal_decrypt)) {
-      module_load_include('module', 'clients', 'connections/clients_drupal/clients_drupal');
-    }
-    $this->configuration['password'] = clients_drupal_decrypt($this->configuration['password']);
-
-  }
+  //   // Decrypt the password.
+  //   if (!function_exists('clients_drupal_decrypt')) {
+  //     module_load_include('module', 'clients', 'connections/clients_drupal/clients_drupal');
+  //   }
+  //   $this->configuration['password'] = clients_drupal_decrypt($this->configuration['password']);
+  //   dpm($this, "clients_connection_sharedshelf_client");
+  // }
 
   // ============================================ Base: Testing system.
   /**
@@ -63,6 +63,14 @@ class clients_connection_shared_shelf extends clients_connection_base {
       '#action_submit' => 'testConnectionLogout',
       '#description' => t('Test the remote user settings and by calling user.logout on the remote server.'),
     );
+    $buttons['reset'] = array(
+      '#value' => t('Reset the HTTP request status'),
+      '#type' => 'submit',
+      //'#name' => 'login',
+      '#action_type' => 'method',
+      '#action_submit' => 'testConnectionResetHttpRequest',
+      '#description' => t('Reset the HTTP request status so Drupal can make HTTP requests.'),
+    );
     return $buttons;
   }
 
@@ -81,7 +89,7 @@ class clients_connection_shared_shelf extends clients_connection_base {
       drupal_set_message(t('Could not connect to the remote site, got error message "@message".', array(
         '@message' => $e->getMessage(),
       )), 'warning');
-      //dsm($e);
+      //dpm($e);
 
       return;
     }
@@ -111,7 +119,7 @@ class clients_connection_shared_shelf extends clients_connection_base {
       drupal_set_message(t('Could not log in to the remote site, got error message "@message".', array(
         '@message' => $e->getMessage(),
       )), 'warning');
-      //dsm($e);
+      //dpm($e);
 
       return;
     }
@@ -133,7 +141,29 @@ class clients_connection_shared_shelf extends clients_connection_base {
       drupal_set_message(t('Could not log out of the remote site, got error message "@message".', array(
         '@message' => $e->getMessage(),
       )), 'warning');
-      //dsm($e);
+      //dpm($e);
+
+      return;
+    }
+    return $login;
+  }
+
+  /**
+   * Connection test button handler: reset the HTTP request status.
+   */
+  function testConnectionResetHttpRequest(&$button_form_values) {
+    try {
+      // Handle the situation where this message shows up:
+      //  Drupal is unable to make HTTP requests. Please reset the HTTP request status.
+      //  see https://www.drupal.org/node/1186572
+      variable_del('drupal_http_request_fails');
+      $login = '';
+    }
+    catch (Exception $e) {
+      drupal_set_message(t('Could not reset the HTTP request status, got error message "@message".', array(
+        '@message' => $e->getMessage(),
+      )), 'warning');
+      //dpm($e);
 
       return;
     }
@@ -158,13 +188,14 @@ class clients_connection_shared_shelf extends clients_connection_base {
    * @see clients_connection_form()
    * @see clients_connection_form_submit()
    */
-  function connectionSettingsForm(&$form_state) {
-    $form = array();
+  function connectionSettingsFormAlter(&$form, &$form_state) {
+
+    $is_new = isset($this->is_new) && $this->is_new;
 
     $form['endpoint'] = array(
       '#type' => 'textfield',
       '#title' => t('Connection endpoint'),
-      '#default_value' => $this->new ? '' : $this->endpoint,
+      '#default_value' => $is_new ? '' : $this->endpoint,
       '#size' => 50,
       '#maxlength' => 100,
       '#description' => t('Remote service URL e.g. http://catalog.stage3.sharedshelf.artstor.org'),
@@ -181,7 +212,7 @@ class clients_connection_shared_shelf extends clients_connection_base {
     $form['configuration']['username'] = array(
       '#type' => 'textfield',
       '#title' => t('ARTstor email'),
-      '#default_value' => $this->new ? '' : $this->configuration['username'],
+      '#default_value' => $is_new ? '' : $this->configuration['username'],
       '#size' => 30,
       '#maxlength' => 60,
       '#attributes' => array('autocomplete' => 'off'),
@@ -189,7 +220,7 @@ class clients_connection_shared_shelf extends clients_connection_base {
       '#required' => TRUE,
     );
 
-    $password_desc = $this->new
+    $password_desc = $is_new
       ? t('This should be same as the password on the server you are connecting to.')
       : t('This should be same as the password on the server you are connecting to. Leave blank unless you need to change this.');
     $form['configuration']['password'] = array(
@@ -199,10 +230,8 @@ class clients_connection_shared_shelf extends clients_connection_base {
       '#maxlength' => 60,
       '#attributes' => array('autocomplete' => 'off'),
       '#description' => $password_desc,
-      '#required' => $this->new,
+      '#required' => $is_new,
     );
-
-    return $form;
   }
 
   /**
@@ -211,21 +240,24 @@ class clients_connection_shared_shelf extends clients_connection_base {
    * @see clients_connection_form_submit()
    */
   function connectionSettingsForm_submit($form, &$form_state) {
-    $old_connection = $form_state['values']['old_connection'];
+    //dpm($form_state, 'connectionSettingsForm_submit');
+    if (isset($form_state['values']['old_connection'])) {
+      $old_connection = $form_state['values']['old_connection'];
 
-    // Check whether we're editing or adding a new connection.
-    if ($old_connection->new) {
-      //jgrtest $form_state['values']['configuration']['password'] = clients_drupal_encrypt($form_state['values']['configuration']['password']);
-      $form_state['values']['configuration']['password'] = $form_state['values']['configuration']['password'];
-    }
-    else {
-      // Prepare password for serialized storage
-      if (empty($form_state['values']['configuration']['password'])) {
-        // Set password to original if blank.
-        $form_state['values']['configuration']['password'] = $old_connection->configuration['password'];
+      // Check whether we're editing or adding a new connection.
+      if ($old_connection->is_new) {
+        //jgrtest $form_state['values']['configuration']['password'] = clients_drupal_encrypt($form_state['values']['configuration']['password']);
+        $form_state['values']['configuration']['password'] = $form_state['values']['configuration']['password'];
       }
-      //jgrtest $form_state['values']['configuration']['password'] = clients_drupal_encrypt($form_state['values']['configuration']['password']);
-      $form_state['values']['configuration']['password'] = $form_state['values']['configuration']['password'];
+      else {
+        // Prepare password for serialized storage
+        if (empty($form_state['values']['configuration']['password'])) {
+          // Set password to original if blank.
+          $form_state['values']['configuration']['password'] = $old_connection->configuration['password'];
+        }
+        //jgrtest $form_state['values']['configuration']['password'] = clients_drupal_encrypt($form_state['values']['configuration']['password']);
+        $form_state['values']['configuration']['password'] = $form_state['values']['configuration']['password'];
+      }
     }
   }
 
@@ -257,6 +289,7 @@ class clients_connection_shared_shelf extends clients_connection_base {
     }
 
     $params = array();
+    $result = '';
 
     switch ($method) {
       case 'user.login':
@@ -308,11 +341,11 @@ class clients_connection_shared_shelf extends clients_connection_base {
         break;
 
       default :
-        dsm('strange method for callMethodArray: ' . $method);
+        dpm('strange method for callMethodArray: ' . $method);
         break;
     }
 
-    return $result;
+    return json_decode($result, true);
   }
 
   private function post($path = 'account', $params = array()) {
@@ -359,9 +392,9 @@ class clients_connection_shared_shelf extends clients_connection_base {
   private function get($path = 'account', $params = array()) {
     // $path is part of endpoint url after .../artstor.org/
     // $params is key => value array
-    $postfields = http_build_query($params);
+    $getfields = http_build_query($params);
     $url = $this->endpoint . "/$path?$getfields";
-    dsm($url);
+    //dpm($url);
     $ch = curl_init($url);
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
