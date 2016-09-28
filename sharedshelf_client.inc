@@ -228,15 +228,27 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
    * @see clients_connection_form_submit()
    */
   function connectionSettingsForm_submit($form, &$form_state) {
-    dpm($form_state, 'connectionSettingsForm_submit');
-    if (!empty($form_state['values']['configuration']['password'])) {
-      module_load_include('inc', 'encrypt', 'mcrypt_aes_cbc');
-      $password = $form_state['values']['configuration']['password'];
-      $secret = encrypt($password);
-      unset($password);
-      $form_state['values']['configuration']['password'] = $secret;
+    try {
+      dpm($form_state, 'connectionSettingsForm_submit');
+      if (!empty($form_state['values']['configuration']['password'])) {
+        //module_load_include('inc', 'encrypt');
+        $password = $form_state['values']['configuration']['password'];
+        if (module_exists('encrypt') && function_exists('encrypt')) {
+          $secret = encrypt($password);
+        }
+        else {
+          throw new Exception("Unable to encrypt the password.", 1);
+        }
+        unset($password);
+        $form_state['values']['configuration']['password'] = $secret;
+      }
+      dpm($form_state, 'connectionSettingsForm_submit after');
+
     }
-    dpm($form_state, 'connectionSettingsForm_submit after');
+    catch (Exception $e) {
+      form_set_error('password', $e->getMessage());
+    }
+
   }
 
   function formatEndpoint($url) {
