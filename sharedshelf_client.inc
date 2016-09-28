@@ -178,6 +178,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
    */
   function connectionSettingsFormAlter(&$form, &$form_state) {
 
+    $form['#validate'][] = 'sharedshelf_client_connection_settings_form_validate';
     dpm($form, 'form in connectionSettingsFormAlter');
 
     $is_new = isset($this->is_new) && $this->is_new;

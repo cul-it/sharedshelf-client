@@ -62,3 +62,7 @@ function sharedshelf_client_client_connection_tests_alter(&$tests, $connection) 
     $tests['ss_reset_http'] = 'ClientsConnectionSSTestReset';
   }
 }
+
+function sharedshelf_client_connection_settings_form_validate($form, &$form_state) {
+  dpm($form_state, 'sharedshelf_client_connection_settings_form_validate');
+}
