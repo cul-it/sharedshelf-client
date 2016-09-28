@@ -270,13 +270,14 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
    *  Whatever is returned from the remote site.
    */
   function callMethodArray($method, $method_params = array()) {
-    // If HTTP requests are enabled, report the error and do nothing.
-    // (Cribbed from Content distribution module.)
-    if (variable_get('drupal_http_request_fails', FALSE) == TRUE) {
-      drupal_set_message(t('Drupal is unable to make HTTP requests. Please reset the HTTP request status.'), 'error', FALSE);
-      watchdog('clients', 'Drupal is unable to make HTTP requests. Please reset the HTTP request status.', array(), WATCHDOG_CRITICAL);
-      return;
-    }
+    try {
+      // If HTTP requests are enabled, report the error and do nothing.
+      // (Cribbed from Content distribution module.)
+      if (variable_get('drupal_http_request_fails', FALSE) == TRUE) {
+        drupal_set_message(t('Drupal is unable to make HTTP requests. Please reset the HTTP request status.'), 'error', FALSE);
+        watchdog('clients', 'Drupal is unable to make HTTP requests. Please reset the HTTP request status.', array(), WATCHDOG_CRITICAL);
+        throw new Exception("Drupal is unable to make HTTP requests.", 1);
+      }
 
     $params = array();
     $result = '';
@@ -330,12 +331,13 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
         $result = $this->get("assets/$asset_id/representation/$size", $params);
         break;
 
-      default :
-        dpm('strange method for callMethodArray: ' . $method);
-        break;
-    }
+      return json_decode($result, true);
+      }
+      catch (Exception $e) {
+        form_set_error('password', $e->getMessage());
+      }
 
-    return json_decode($result, true);
+    return FLASE;
   }
 
   private function post($path = 'account', $params = array()) {
