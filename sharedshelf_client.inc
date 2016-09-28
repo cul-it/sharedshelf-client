@@ -229,23 +229,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
    */
   function connectionSettingsForm_submit($form, &$form_state) {
     dpm($form_state, 'connectionSettingsForm_submit');
-    if (isset($form_state['values']['old_connection'])) {
-      $old_connection = $form_state['values']['old_connection'];
-
-      // Check whether we're editing or adding a new connection.
-      if ($old_connection->is_new) {
-        //jgrtest $form_state['values']['configuration']['password'] = clients_drupal_encrypt($form_state['values']['configuration']['password']);
-        $form_state['values']['configuration']['password'] = $form_state['values']['configuration']['password'];
-      }
-      else {
-        // Prepare password for serialized storage
-        if (empty($form_state['values']['configuration']['password'])) {
-          // Set password to original if blank.
-          $form_state['values']['configuration']['password'] = $old_connection->configuration['password'];
-        }
-        //jgrtest $form_state['values']['configuration']['password'] = clients_drupal_encrypt($form_state['values']['configuration']['password']);
-        $form_state['values']['configuration']['password'] = $form_state['values']['configuration']['password'];
-      }
     }
   }
 
