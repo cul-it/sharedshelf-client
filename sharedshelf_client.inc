@@ -228,6 +228,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
    * @see clients_connection_form_submit()
    */
   function connectionSettingsForm_submit($form, &$form_state) {
+    dpm($form_state, 'test');
     try {
       dpm($form_state, 'connectionSettingsForm_submit');
       if (!empty($form_state['values']['configuration']['password'])) {
