@@ -178,8 +178,8 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
    */
   function connectionSettingsFormAlter(&$form, &$form_state) {
 
+    // add validate to encrypt password
     $form['#validate'][] = 'sharedshelf_client_connection_settings_form_validate';
-    dpm($form, 'form in connectionSettingsFormAlter');
 
     $is_new = isset($this->is_new) && $this->is_new;
 
@@ -231,28 +231,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
    * @see clients_connection_form_submit()
    */
   function connectionSettingsForm_submit($form, &$form_state) {
-    try {
-      dpm($form_state, 'connectionSettingsForm_submit');
-      if (!empty($form_state['values']['configuration']['password'])) {
-        //module_load_include('inc', 'encrypt');
-        $password = $form_state['values']['configuration']['password'];
-        if (module_exists('encrypt') && function_exists('encrypt')) {
-          $secret = encrypt($password);
-        }
-        else {
-          throw new Exception("Unable to encrypt the password.", 1);
-        }
-        unset($password);
-        $form_state['values']['configuration']['password'] = $secret;
-      }
-      dpm($form_state, 'connectionSettingsForm_submit after');
-
-    }
-    catch (Exception $e) {
-      form_set_error('password', $e->getMessage());
-    }
-
-  }
+   }
 
   function formatEndpoint($url) {
     return $url;

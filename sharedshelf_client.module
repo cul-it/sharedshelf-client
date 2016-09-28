@@ -64,5 +64,24 @@ function sharedshelf_client_client_connection_tests_alter(&$tests, $connection) 
 }
 
 function sharedshelf_client_connection_settings_form_validate($form, &$form_state) {
-  dpm($form_state, 'sharedshelf_client_connection_settings_form_validate');
+   try {
+      dpm($form_state, 'sharedshelf_client_connection_settings_form_validate');
+      if (!empty($form_state['values']['configuration']['password'])) {
+        $password = $form_state['values']['configuration']['password'];
+        if (module_exists('encrypt') && function_exists('encrypt')) {
+          $secret = encrypt($password);
+        }
+        else {
+          throw new Exception("Unable to encrypt the password.", 1);
+        }
+        unset($password);
+        $form_state['values']['configuration']['password'] = $secret;
+      }
+      dpm($form_state, 'sharedshelf_client_connection_settings_form_validate after');
+
+    }
+    catch (Exception $e) {
+      form_set_error('password', $e->getMessage());
+    }
+
 }
