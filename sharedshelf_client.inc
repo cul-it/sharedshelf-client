@@ -291,6 +291,8 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
             throw new Exception("Unable to decrypt the password.", 1);
           }
 
+          dpm(array($this->configuration['password'],$password), 'decrypted');
+
           // Login and creation session
           $params['email'] = $this->configuration['username'];
           $params['password'] = $password;
