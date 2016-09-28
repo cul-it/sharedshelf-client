@@ -230,7 +230,10 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
   function connectionSettingsForm_submit($form, &$form_state) {
     dpm($form_state, 'connectionSettingsForm_submit');
     if (!empty($form_state['values']['configuration']['password'])) {
-      $form_state['values']['configuration']['password'] = encrypt($form_state['values']['configuration']['password']);
+      $password = $form_state['values']['configuration']['password'];
+      $secret = module_invoke('encrypt', 'encrypt', $password);
+      unset($password);
+      $form_state['values']['configuration']['password'] = $secret;
     }
     dpm($form_state, 'connectionSettingsForm_submit after');
   }
