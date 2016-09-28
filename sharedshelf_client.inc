@@ -221,7 +221,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       '#maxlength' => 60,
       '#attributes' => array('autocomplete' => 'off'),
       '#description' => $password_desc,
-      '#required' => $is_new,
+      '#required' => TRUE,
     );
   }
 
