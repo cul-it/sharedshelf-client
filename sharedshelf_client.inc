@@ -178,6 +178,8 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
    */
   function connectionSettingsFormAlter(&$form, &$form_state) {
 
+    dpm($form, 'form in connectionSettingsFormAlter');
+
     $is_new = isset($this->is_new) && $this->is_new;
 
     $form['endpoint'] = array(
