@@ -4,6 +4,7 @@ description = "Simple client for ARTstor Shared Shelf API"
 package = Cornell University Library
 core = 7.x
 dependencies[] = clients
+dependencies[] = encrypt
 
 files[] = sharedshelf_client.inc
 files[] = sharedshelf_client.testing.inc
