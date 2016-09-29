@@ -324,10 +324,10 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           break;
       }
 
-      return json_decode($result, true);
+      return $result;
       }
       catch (Exception $e) {
-        form_set_error('password', $e->getMessage());
+        form_set_error('Client methods', $e->getMessage());
       }
 
     return FLASE;
