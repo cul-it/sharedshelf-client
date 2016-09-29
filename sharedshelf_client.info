@@ -8,3 +8,4 @@ dependencies[] = encrypt
 
 files[] = sharedshelf_client.inc
 files[] = sharedshelf_client.testing.inc
+files[] = sharedshelf_client.redirects.inc
