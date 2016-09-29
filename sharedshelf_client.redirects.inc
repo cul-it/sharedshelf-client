@@ -13,7 +13,7 @@
  * @param string $url
  * @return string
  */
-function get_redirect_url($url){
+function sharedshelf_client_get_redirect_url($url){
   $redirect_url = null;
 
   $url_parts = @parse_url($url);
@@ -51,9 +51,9 @@ function get_redirect_url($url){
  * @param string $url
  * @return array
  */
-function get_all_redirects($url){
+function sharedshelf_client_get_all_redirects($url){
   $redirects = array();
-  while ($newurl = get_redirect_url($url)){
+  while ($newurl = sharedshelf_client_get_redirect_url($url)){
     if (in_array($newurl, $redirects)){
       break;
     }
@@ -71,8 +71,8 @@ function get_all_redirects($url){
  * @param string $url
  * @return string
  */
-function get_final_url($url){
-  $redirects = get_all_redirects($url);
+function sharedshelf_client_get_final_url($url){
+  $redirects = sharedshelf_client_get_all_redirects($url);
   if (count($redirects)>0){
     return array_pop($redirects);
   } else {
