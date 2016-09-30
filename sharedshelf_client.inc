@@ -362,6 +362,16 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       // how many assets?
       $total = $this->callMethod('projects.assets.count', $project_id);
 
+      $limit = 1;
+      $results = array();
+      for ($start = 0; $start < $total; $start += $limit) {
+        $result = $this->callMethod('projects.assets', $project_id, $start, $limit);
+        $result = json_decode($result, TRUE);
+        dpm($result);
+        throw new Exception("Error Processing Request", 1);
+
+      }
+
       $result = 'get_assets: ' . $total;
       dpm($result);
 
