@@ -369,7 +369,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
         $result = json_decode($result, TRUE);
         foreach ($result['assets'] as $asset) {
           $ssid = $asset['id'];
-          $image_url = $this->callMethod('asset.full', $ssid);
+          $image_url = $this->callMethod('asset.thumbnail', $ssid, 4);
           $asset['full_image_url'] = $image_url;
           $results['assets'][] = $asset;
         }
