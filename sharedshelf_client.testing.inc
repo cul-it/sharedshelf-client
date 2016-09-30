@@ -237,7 +237,7 @@ class ClientsConnectionSSTestAssets implements ClientsConnectionTestingInterface
   function test($connection, &$button_form_values) {
     try {
       // Call the connect method.
-      $results = $connection->callMethodArray('feeds.assets', $this->test_project);
+      $results = $connection->callMethod('feeds.assets', $this->test_project);
       $results = json_decode($results, TRUE);
    }
    catch (Exception $e) {
