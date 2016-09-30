@@ -362,30 +362,28 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       // how many assets?
       $total = $this->callMethod('projects.assets.count', $project_id);
 
-      $limit = 1;
+      $limit = 25;
       $results = array();
       for ($start = 0; $start < $total; $start += $limit) {
         $result = $this->callMethod('projects.assets', $project_id, $start, $limit);
         $result = json_decode($result, TRUE);
-        dpm($result, 'asset');
-        $ssid = $result['assets'][0]['id'];
-        $image_url = $this->callMethod('asset.full', $ssid);
-        dpm($image_url, 'image');
-        throw new Exception("Error Processing Request", 1);
-
+        foreach ($result['assets'] as $asset) {
+          $ssid = $asset['id'];
+          $image_url = $this->callMethod('asset.full', $ssid);
+          $asset['representation'] = $image_url;
+          $results['assets'][] = $asset;
+        }
       }
-
-      $result = 'get_assets: ' . $total;
-      dpm($result);
+      dpm($results);
 
       // log user out
       $logout = $this->callMethod('user.logout');
     }
     catch (Exception $e) {
       form_set_error('get_assets', $e->getMessage());
-      $result = FALSE;
+      $results = FALSE;
     }
-    return $result;
+    return $results;
   }
 
   private function post($path = 'account', $params = array()) {
