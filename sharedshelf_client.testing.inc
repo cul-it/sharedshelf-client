@@ -239,17 +239,15 @@ class ClientsConnectionSSTestAssets implements ClientsConnectionTestingInterface
       // Call the connect method.
       $results = $connection->callMethodArray('feeds.assets', $this->test_project);
       $results = json_decode($results, TRUE);
-      dpm($results);
-
    }
    catch (Exception $e) {
       drupal_set_message(t('Could not test project assets, got error message "@message".', array(
         '@message' => $e->getMessage(),
       )), 'warning');
-      $connect = FALSE;
+      $results = FALSE;
    }
 
-    return $connect;
+    return $results;
   }
 
 }
