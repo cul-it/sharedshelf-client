@@ -300,7 +300,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           // Returns URL for full sized image
           // expects $method_params = array( {asset id - (ssid)} )
           $asset_id = $method_params[1];
-          $result = $this->get("assets/$asset_id/representation", $params);
+          $result = $this->get_url("assets/$asset_id/representation", $params);
           break;
         case 'asset.thumbnail':
           // Returns URL for reduced sized image
@@ -310,7 +310,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           if (!in_array($size, array(64, 128, 256, 512, 1024))) {
             throw new Exception("Invalid thumbnail size: $size. Must be one of 64,128,256,512,1024");
           }
-          $result = $this->get("assets/$asset_id/representation/$size", $params);
+          $result = $this->get_url("assets/$asset_id/representation/$size", $params);
           break;
 
         default :
