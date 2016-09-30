@@ -237,7 +237,7 @@ class ClientsConnectionSSTestAssets implements ClientsConnectionTestingInterface
   function test($connection, &$button_form_values) {
     try {
       // Call the connect method.
-      $connect = $connection->callMethodArray('project.assets', $this->test_project);
+      $connect = $connection->callMethodArray('projects.assets', $this->test_project);
       $connect = json_decode($connect, TRUE);
 
       if (is_array($connect) && isset($connect['logged_in']) && $connect['logged_in'] === true) {
