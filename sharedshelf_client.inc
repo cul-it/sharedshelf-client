@@ -264,8 +264,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       $params = array();
       $result = '';
 
-      dpm(array($method, $method_params), 'call to callMethodArray');
-
       switch ($method) {
         case 'user.login':
           if (module_exists('encrypt') && function_exists('decrypt')) {
