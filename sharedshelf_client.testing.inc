@@ -214,7 +214,7 @@ class ClientsConnectionSSTestAssets implements ClientsConnectionTestingInterface
   function testLabels() {
     return array(
       'label' => t('Test project assets project ' . $this->test_project),
-      'description' => t('Test the ability to grab assets using projects.assets.'),
+      'description' => t('Test the ability to grab assets using feeds.assets.'),
       'button' => t('Assets'),
     );
   }
@@ -237,7 +237,7 @@ class ClientsConnectionSSTestAssets implements ClientsConnectionTestingInterface
   function test($connection, &$button_form_values) {
     try {
       // Call the connect method.
-      $connect = $connection->callMethodArray('projects.assets', $this->test_project);
+      $connect = $connection->callMethodArray('feeds.assets', $this->test_project);
       $connect = json_decode($connect, TRUE);
 
       if (is_array($connect) && isset($connect['logged_in']) && $connect['logged_in'] === true) {
