@@ -300,12 +300,11 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
             'start' => 0,
             'limit' => 1,
             'with_meta' => FALSE,
-            'sort' => 'id',
-            'dir' => 'ASC',
             );
           $result = $this->get("projects/$project_id/assets", $params);
           $result = json_decode($result, TRUE);
-          dpm($result, 'asset count?');
+          $total = $result['total'];
+          dpm($total, 'asset count?');
           throw new Exception("Error Processing Request", 1);
 
 
