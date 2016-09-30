@@ -330,6 +330,12 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           }
           $result = $this->get_url("assets/$asset_id/representation/$size", $params);
           break;
+        case 'feeds.assets':
+          // construct a list of assets suitable for feeds
+          // expects $method_params = array( {project_id} )
+          $project_id = $method_params[0];
+          $result = $this->get_assets($project_id);
+          break;
 
         default :
           dpm('strange method for callMethodArray: ' . $method);
@@ -343,6 +349,23 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       $result = FALSE;
     }
 
+    return $result;
+  }
+
+  private function get_assets($project_id) {
+    try {
+      // be sure user is logged in
+      $login = $this->callMethodArray('user.login');
+
+      $result = '';
+
+      // log user out
+      $logout = $this->callMethodArray('user.logout');
+    }
+    catch (Exception $e) {
+      form_set_error('get_assets', $e->getMessage());
+      $result = FALSE;
+    }
     return $result;
   }
 
