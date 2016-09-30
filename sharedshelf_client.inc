@@ -368,7 +368,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       $login = $this->callMethodArray('user.login');
 
       // how many assets?
-      $total = $this->callMethodArray('projects.assets.count', $project_id);
+      $total = $this->callMethodArray('projects.assets.count', array($project_id));
 
       $result = 'get_assets: ' . $total;
       dpm($result);
