@@ -279,7 +279,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           break;
         case 'system.connect':
           // Returns the user emails and id and login status.
-          //$params['_dc'] = '1342619234905'; // ?? wherever this comes from
           $result = $this->get('account');
           break;
         case 'user.logout':
@@ -288,15 +287,12 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           break;
         case 'projects':
           // Returns list of projects accessible by the user.
-          // TODO: where does _dc come from?
-          //$params['_dc'] = '1342619234905'; // ?? wherever this comes from
           $result = $this->get('projects', $params);
           break;
         case 'projects.assets':
           // Returns list of projects accessible by the user.
           // expects $method_params = array( {project_id} )
           $project_id = $method_params[0];
-          //$params['_dc'] = '1342619234905'; // ?? wherever this comes from
           // TODO: deal with paging when > 25 assets
           $result = $this->get("projects/$project_id/assets", $params);
           break;
@@ -304,7 +300,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           // Returns URL for full sized image
           // expects $method_params = array( {asset id - (ssid)} )
           $asset_id = $method_params[1];
-          //$params['_dc'] = '1342619234905'; // ?? wherever this comes from
           $result = $this->get("assets/$asset_id/representation", $params);
           break;
         case 'asset.thumbnail':
@@ -315,7 +310,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           if (!in_array($size, array(64, 128, 256, 512, 1024))) {
             throw new Exception("Invalid thumbnail size: $size. Must be one of 64,128,256,512,1024");
           }
-          //$params['_dc'] = '1342619234905'; // ?? wherever this comes from
           $result = $this->get("assets/$asset_id/representation/$size", $params);
           break;
 
