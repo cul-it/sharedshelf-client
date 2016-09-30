@@ -352,7 +352,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
 
     $response = curl_exec($ch);
     curl_close($ch);
-    // $response = json_decode($response, TRUE);
     return $response;
   }
 
@@ -373,7 +372,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
 
     $response = curl_exec($ch);
     curl_close($ch);
-    // $response = json_decode($response, TRUE);
     return $response;
   }
 
@@ -392,7 +390,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
 
     $response = curl_exec($ch);
     curl_close($ch);
-    // $response = json_decode($response, TRUE);
     return $response;
   }
 
