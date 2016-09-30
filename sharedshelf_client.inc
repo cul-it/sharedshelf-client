@@ -301,8 +301,9 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
             'limit' => 1,
             'with_meta' => FALSE,
             'sort' => 'id',
-            'dir' => 'ASC'
+            'dir' => 'ASC',
             );
+          $params = array();
           $result = $this->get("projects/$project_id/assets", $params);
           $result = json_decode($result, TRUE);
           dpm($result, 'asset count?');
