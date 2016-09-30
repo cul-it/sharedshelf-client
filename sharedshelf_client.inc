@@ -370,11 +370,11 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
         foreach ($result['assets'] as $asset) {
           $ssid = $asset['id'];
           $image_url = $this->callMethod('asset.full', $ssid);
-          $asset['representation'] = $image_url;
+          $asset['full_image_url'] = $image_url;
           $results['assets'][] = $asset;
         }
       }
-      dpm($results);
+      $results = json_encode($results);
 
       // log user out
       $logout = $this->callMethod('user.logout');
