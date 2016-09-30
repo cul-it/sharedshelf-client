@@ -332,7 +332,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           if ($size < 0 || $size > 4) {
             throw new Exception("Invalid thumbnail size: $size. Must be one of 0,1,2,3,4");
           }
-          $result = $this->get_url("assets/$asset_id/representation/$size", $params);
+          $result = $this->get_url("representation/$asset_id/size/$size", $params);
           break;
         case 'feeds.assets':
           // construct a list of assets suitable for feeds
