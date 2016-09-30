@@ -301,7 +301,8 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
             'with_meta' => FALSE,
             );
           $result = $this->get("projects/$project_id/assets", $params);
-          // see total field in $result (JSON)
+          $result = json_decode($result, TRUE);
+          $result = $result['total'];
           break;
         case 'projects.assets':
           // Returns list of assets accessible by the user.
