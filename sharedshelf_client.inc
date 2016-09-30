@@ -293,6 +293,13 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           // Returns list of assets accessible by the user.
           // expects $method_params = array( {project_id} )
           $project_id = $method_params[0];
+          $params(
+            'start' => isset($method_params[1]) ? $method_params[1] : 0,
+            'limit' => isset($method_params[2]) ? $method_params[2] : 25,
+            'sith_meta' => FALSE,
+            'sort' => 'id',
+            'dir' => 'ASC'
+            );
           // TODO: deal with paging when > 25 assets
           $result = $this->get("projects/$project_id/assets", $params);
           break;
