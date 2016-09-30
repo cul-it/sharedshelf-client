@@ -42,7 +42,7 @@ class ClientsConnectionSSTestConnect implements ClientsConnectionTestingInterfac
     try {
       // Call the connect method.
       $connect = $connection->callMethodArray('system.connect');
-      $connect = json_decode($connect);
+      $connect = json_decode($connect, TRUE);
 
       if (is_array($connect) && isset($connect['logged_in']) && $connect['logged_in'] === true) {
         drupal_set_message(t('Sucessfully connected to the remote site.'));
@@ -87,7 +87,7 @@ class ClientsConnectionSSTestLogin implements ClientsConnectionTestingInterface 
     try {
       // Call the login method.
       $login = $connection->callMethodArray('user.login');
-      $login = json_decode($login);
+      $login = json_decode($login, TRUE);
 
       if (is_array($login) && isset($login['success']) && $login['success'] === true) {
         drupal_set_message(t('Sucessfully logged in to the remote site; got back details for user %user (profile @uid).', array(
@@ -137,7 +137,7 @@ class ClientsConnectionSSTestLogout implements ClientsConnectionTestingInterface
     try {
       // Call the login method.
       $logout = $connection->callMethodArray('user.logout');
-      $logout = json_decode($logout);
+      $logout = json_decode($logout, TRUE);
       if (is_array($logout) && isset($logout['success']) && $logout['success'] === true) {
         drupal_set_message(t('Sucessfully logged out of the remote site.'));
       }
