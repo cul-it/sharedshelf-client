@@ -304,11 +304,12 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           break;
         case 'asset.thumbnail':
           // Returns URL for reduced sized image
-          // expects $method_params = array( {asset id - (ssid)}, {size id - ( one of 64, 128, 256, 512, 1024 )} )
+          // expects $method_params = array( {asset id - (ssid)}, {size id - ( [0-4] )} )
+          // sizes: 0=64, 1=128,2=256, 3=512, 4=1024
           $asset_id = $method_params[1];
           $size = $method_params[2];
-          if (!in_array($size, array(64, 128, 256, 512, 1024))) {
-            throw new Exception("Invalid thumbnail size: $size. Must be one of 64,128,256,512,1024");
+          if ($size < 0 || $size > 4) {
+            throw new Exception("Invalid thumbnail size: $size. Must be one of 0,1,2,3,4");
           }
           $result = $this->get_url("assets/$asset_id/representation/$size", $params);
           break;
