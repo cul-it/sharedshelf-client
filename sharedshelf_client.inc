@@ -290,7 +290,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           $result = $this->get('projects', $params);
           break;
         case 'projects.assets':
-          // Returns list of projects accessible by the user.
+          // Returns list of assets accessible by the user.
           // expects $method_params = array( {project_id} )
           $project_id = $method_params[0];
           // TODO: deal with paging when > 25 assets
