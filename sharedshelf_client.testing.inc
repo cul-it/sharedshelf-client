@@ -213,7 +213,7 @@ class ClientsConnectionSSTestAssets implements ClientsConnectionTestingInterface
    */
   function testLabels() {
     return array(
-      'label' => t('Test project assets project ' . $this->test_project),
+      'label' => t('Test project assets  ' . $this->test_project),
       'description' => t('Test the ability to grab assets using feeds.assets.'),
       'button' => t('Assets'),
     );
@@ -237,18 +237,13 @@ class ClientsConnectionSSTestAssets implements ClientsConnectionTestingInterface
   function test($connection, &$button_form_values) {
     try {
       // Call the connect method.
-      $connect = $connection->callMethodArray('feeds.assets', $this->test_project);
-      $connect = json_decode($connect, TRUE);
+      $results = $connection->callMethodArray('feeds.assets', $this->test_project);
+      $results = json_decode($results, TRUE);
+      dpm($results);
 
-      if (is_array($connect) && isset($connect['logged_in']) && $connect['logged_in'] === true) {
-        drupal_set_message(t('Sucessfully connected to the remote site.'));
-      }
-      else {
-        drupal_set_message(t('Could not connect to the remote site.'), 'warning');
-      }
    }
    catch (Exception $e) {
-      drupal_set_message(t('Could not connect to the remote site, got error message "@message".', array(
+      drupal_set_message(t('Could not test project assets, got error message "@message".', array(
         '@message' => $e->getMessage(),
       )), 'warning');
       $connect = FALSE;
