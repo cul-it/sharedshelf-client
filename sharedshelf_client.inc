@@ -367,7 +367,10 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       for ($start = 0; $start < $total; $start += $limit) {
         $result = $this->callMethod('projects.assets', $project_id, $start, $limit);
         $result = json_decode($result, TRUE);
-        dpm($result);
+        dpm($result, 'asset');
+        $ssid = $result['assets'][0]['id'];
+        $image_url = $this->callMethod('asset.full', $ssid);
+        dpm($image_url, 'image')
         throw new Exception("Error Processing Request", 1);
 
       }
