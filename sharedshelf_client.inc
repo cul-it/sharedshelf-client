@@ -289,6 +289,19 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           // Returns list of projects accessible by the user.
           $result = $this->get('projects', $params);
           break;
+        case 'projects.assets.count':
+          // expects $method_params = array( {project_id} )
+          $project_id = $method_params[0];
+          // find out the total asset count
+          $params = array(
+            'start' => 0,
+            'limit' => 1,
+            'with_meta' => FALSE,
+            );
+          $result = $this->get("projects/$project_id/assets", $params);
+          $result = json_decode($result, TRUE);
+          $result = $result['total'];
+          break;
         case 'projects.assets':
           // Returns list of assets accessible by the user.
           // expects $method_params = array( {project_id} )
@@ -357,7 +370,10 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       // be sure user is logged in
       $login = $this->callMethodArray('user.login');
 
-      $result = 'get_assets';
+      // how many assets?
+      $total = $this->callMethodArray('projects.assets.count');
+
+      $result = 'get_assets: ' . $total;
       dpm($result);
 
       // log user out
