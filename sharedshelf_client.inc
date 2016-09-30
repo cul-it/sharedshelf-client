@@ -295,7 +295,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           // Returns list of assets accessible by the user.
           // expects $method_params = array( {project_id} )
           $project_id = $method_params[0];
-          // find out the asset count
+          // find out the total asset count
           $params = array(
             'start' => 0,
             'limit' => 1,
@@ -304,13 +304,10 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           $result = $this->get("projects/$project_id/assets", $params);
           $result = json_decode($result, TRUE);
           $total = $result['total'];
-          dpm($total, 'asset count?');
-          throw new Exception("Error Processing Request", 1);
-
 
           $params = array(
-            'start' => isset($method_params[1]) ? $method_params[1] : 0,
-            'limit' => isset($method_params[2]) ? $method_params[2] : 25,
+            'start' => 0,
+            'limit' => $total,
             'with_meta' => FALSE,
             'sort' => 'id',
             'dir' => 'ASC'
