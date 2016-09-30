@@ -327,12 +327,13 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       }
 
       return $result;
-      }
-      catch (Exception $e) {
-        form_set_error('Client methods', $e->getMessage());
-      }
+    }
+    catch (Exception $e) {
+      form_set_error('Client methods', $e->getMessage());
+      $result = FALSE;
+    }
 
-    return FLASE;
+    return $result;
   }
 
   private function post($path = 'account', $params = array()) {

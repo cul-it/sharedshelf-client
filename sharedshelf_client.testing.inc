@@ -42,20 +42,21 @@ class ClientsConnectionSSTestConnect implements ClientsConnectionTestingInterfac
     try {
       // Call the connect method.
       $connect = $connection->callMethodArray('system.connect');
-    }
-    catch (Exception $e) {
+      $connect = json_decode($connect);
+
+      if (is_array($connect) && isset($connect['logged_in']) && $connect['logged_in'] === true) {
+        drupal_set_message(t('Sucessfully connected to the remote site.'));
+      }
+      else {
+        drupal_set_message(t('Could not connect to the remote site.'), 'warning');
+      }
+   }
+   catch (Exception $e) {
       drupal_set_message(t('Could not connect to the remote site, got error message "@message".', array(
         '@message' => $e->getMessage(),
       )), 'warning');
-      return;
-    }
-
-    if (is_array($connect) && isset($connect['logged_in']) && $connect['logged_in'] === true) {
-      drupal_set_message(t('Sucessfully connected to the remote site.'));
-    }
-    else {
-      drupal_set_message(t('Could not connect to the remote site.'), 'warning');
-    }
+      $connect = FALSE;
+   }
 
     return $connect;
   }
@@ -86,7 +87,17 @@ class ClientsConnectionSSTestLogin implements ClientsConnectionTestingInterface 
     try {
       // Call the login method.
       $login = $connection->callMethodArray('user.login');
-      // Eep. we need user details!!!
+      $login = json_decode($login);
+
+      if (is_array($login) && isset($login['success']) && $login['success'] === true) {
+        drupal_set_message(t('Sucessfully logged in to the remote site; got back details for user %user (profile @uid).', array(
+          '%user' => $login['username'],
+          '@uid'  => $login['profile_id'],
+          )));
+      }
+      else {
+        drupal_set_message(t('Could not log in to the remote site.'), 'warning');
+      }
     }
     catch (Exception $e) {
       drupal_set_message(t('Could not log in to the remote site, got error message "@message".', array(
@@ -94,17 +105,7 @@ class ClientsConnectionSSTestLogin implements ClientsConnectionTestingInterface 
       )), 'warning');
       //dsm($e);
 
-      return;
-    }
-
-    if (is_array($login) && isset($login['success']) && $login['success'] === true) {
-      drupal_set_message(t('Sucessfully logged in to the remote site; got back details for user %user (profile @uid).', array(
-        '%user' => $login['username'],
-        '@uid'  => $login['profile_id'],
-        )));
-    }
-    else {
-      drupal_set_message(t('Could not log in to the remote site.'), 'warning');
+      $login = FALSE;
     }
 
     return $login;
@@ -136,7 +137,13 @@ class ClientsConnectionSSTestLogout implements ClientsConnectionTestingInterface
     try {
       // Call the login method.
       $logout = $connection->callMethodArray('user.logout');
-      // Eep. we need user details!!!
+      $logout = json_decode($logout);
+      if (is_array($logout) && isset($logout['success']) && $logout['success'] === true) {
+        drupal_set_message(t('Sucessfully logged out of the remote site.'));
+      }
+      else {
+        drupal_set_message(t('Could not log out of the remote site.'), 'warning');
+      }
     }
     catch (Exception $e) {
       drupal_set_message(t('Could not log out of the remote site, got error message "@message".', array(
@@ -144,15 +151,9 @@ class ClientsConnectionSSTestLogout implements ClientsConnectionTestingInterface
       )), 'warning');
       //dsm($e);
 
-      return;
+      $logout = FALSE;
     }
 
-    if (is_array($logout) && isset($logout['success']) && $logout['success'] === true) {
-      drupal_set_message(t('Sucessfully logged out of the remote site.'));
-    }
-    else {
-      drupal_set_message(t('Could not log out of the remote site.'), 'warning');
-    }
 
     return $logout;
   }
@@ -190,7 +191,7 @@ class ClientsConnectionSSTestReset implements ClientsConnectionTestingInterface 
       )), 'warning');
       //dsm($e);
 
-      return;
+      $logout = FALSE;
     }
     return $logout;
   }
