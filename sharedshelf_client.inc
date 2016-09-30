@@ -357,7 +357,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       // be sure user is logged in
       $login = $this->callMethodArray('user.login');
 
-      $result = '';
+      $result = 'get_assets';
 
       // log user out
       $logout = $this->callMethodArray('user.logout');
