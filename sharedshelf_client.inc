@@ -353,8 +353,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           dpm('strange method for callMethodArray: ' . $method);
           break;
       }
-
-      return $result;
     }
     catch (Exception $e) {
       form_set_error('Client methods', $e->getMessage());
