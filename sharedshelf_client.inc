@@ -264,6 +264,8 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       $params = array();
       $result = '';
 
+      //dpm(array($method,$method_params), 'callMethodArray');
+
       switch ($method) {
         case 'user.login':
           if (module_exists('encrypt') && function_exists('decrypt')) {
@@ -279,7 +281,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           break;
         case 'system.connect':
           // Returns the user emails and id and login status.
-          //$params['_dc'] = '1342619234905'; // ?? wherever this comes from
           $result = $this->get('account');
           break;
         case 'user.logout':
@@ -288,49 +289,101 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           break;
         case 'projects':
           // Returns list of projects accessible by the user.
-          // TODO: where does _dc come from?
-          //$params['_dc'] = '1342619234905'; // ?? wherever this comes from
           $result = $this->get('projects', $params);
           break;
-        case 'projects.assets':
-          // Returns list of projects accessible by the user.
+        case 'projects.assets.count':
           // expects $method_params = array( {project_id} )
           $project_id = $method_params[0];
-          //$params['_dc'] = '1342619234905'; // ?? wherever this comes from
-          // TODO: deal with paging when > 25 assets
+          // find out the total asset count
+          $params = array(
+            'start' => 0,
+            'limit' => 1,
+            'with_meta' => FALSE,
+            );
+          $result = $this->get("projects/$project_id/assets", $params);
+          $result = json_decode($result, TRUE);
+          $result = $result['total'];
+          break;
+        case 'projects.assets':
+          // Returns list of assets accessible by the user.
+          // expects $method_params = array( {project_id}, Starting item, items per call )
+          $project_id = $method_params[0];
+          $params = array(
+            'start' => $method_params[1],
+            'limit' => $method_params[2],
+            'with_meta' => FALSE,
+            'sort' => 'id',
+            'dir' => 'ASC'
+            );
           $result = $this->get("projects/$project_id/assets", $params);
           break;
         case 'asset.full':
           // Returns URL for full sized image
           // expects $method_params = array( {asset id - (ssid)} )
-          $asset_id = $method_params[1];
-          //$params['_dc'] = '1342619234905'; // ?? wherever this comes from
-          $result = $this->get("assets/$asset_id/representation", $params);
+          $asset_id = $method_params[0];
+          $result = $this->get_url("assets/$asset_id/representation", $params);
           break;
         case 'asset.thumbnail':
           // Returns URL for reduced sized image
-          // expects $method_params = array( {asset id - (ssid)}, {size id - ( one of 64, 128, 256, 512, 1024 )} )
-          $asset_id = $method_params[1];
-          $size = $method_params[2];
-          if (!in_array($size, array(64, 128, 256, 512, 1024))) {
-            throw new Exception("Invalid thumbnail size: $size. Must be one of 64,128,256,512,1024");
+          // expects $method_params = array( {asset id - (ssid)}, {size id - ( [0-4] )} )
+          // sizes: 0=64, 1=128,2=256, 3=512, 4=1024
+          $asset_id = $method_params[0];
+          $size = $method_params[1];
+          if ($size < 0 || $size > 4) {
+            throw new Exception("Invalid thumbnail size: $size. Must be one of 0,1,2,3,4");
           }
-          //$params['_dc'] = '1342619234905'; // ?? wherever this comes from
-          $result = $this->get("assets/$asset_id/representation/$size", $params);
+          $result = $this->get_url("representation/$asset_id/size/$size", $params);
+          break;
+        case 'feeds.assets':
+          // construct a list of assets suitable for feeds
+          // expects $method_params = array( {project_id} )
+          $project_id = $method_params[0];
+          $result = $this->get_assets($project_id);
           break;
 
         default :
           dpm('strange method for callMethodArray: ' . $method);
           break;
       }
+    }
+    catch (Exception $e) {
+      form_set_error('Client methods', $e->getMessage());
+      $result = FALSE;
+    }
 
-      return $result;
-      }
-      catch (Exception $e) {
-        form_set_error('Client methods', $e->getMessage());
-      }
+    return $result;
+  }
 
-    return FLASE;
+  private function get_assets($project_id) {
+    try {
+      // be sure user is logged in
+      $login = $this->callMethod('user.login');
+
+      // how many assets?
+      $total = $this->callMethod('projects.assets.count', $project_id);
+
+      $limit = 25;
+      $results = array();
+      for ($start = 0; $start < $total; $start += $limit) {
+        $result = $this->callMethod('projects.assets', $project_id, $start, $limit);
+        $result = json_decode($result, TRUE);
+        foreach ($result['assets'] as $asset) {
+          $ssid = $asset['id'];
+          $image_url = $this->callMethod('asset.full', $ssid);
+          $asset['full_image_url'] = $image_url;
+          $results['assets'][] = $asset;
+        }
+      }
+      $results = json_encode($results);
+
+      // log user out
+      $logout = $this->callMethod('user.logout');
+    }
+    catch (Exception $e) {
+      form_set_error('get_assets', $e->getMessage());
+      $results = FALSE;
+    }
+    return $results;
   }
 
   private function post($path = 'account', $params = array()) {
@@ -349,7 +402,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
 
     $response = curl_exec($ch);
     curl_close($ch);
-    // $response = json_decode($response, TRUE);
     return $response;
   }
 
@@ -370,7 +422,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
 
     $response = curl_exec($ch);
     curl_close($ch);
-    // $response = json_decode($response, TRUE);
     return $response;
   }
 
@@ -389,7 +440,61 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
 
     $response = curl_exec($ch);
     curl_close($ch);
-    // $response = json_decode($response, TRUE);
     return $response;
   }
+
+  private function get_url($path = '/account', $params = array(), $require_extension = TRUE) {
+    // sometimes the first time gets the url without an extension
+    $getfields = http_build_query($params);
+    $url = $this->endpoint . "/$path?$getfields";
+    $ch = curl_init($url);
+    if ($ch === FALSE) {
+      curl_close($ch);
+      throw new Exception("Bad request url in get_url: $url", 1);
+    }
+    $options = array(
+      CURLOPT_CONNECTTIMEOUT => 120,
+      CURLOPT_COOKIEFILE =>  $this->cookie_file, /* make sure you provide FULL PATH to cookie files*/
+      CURLOPT_COOKIEJAR => $this->cookie_jar_file,
+      CURLOPT_FOLLOWLOCATION => FALSE,  // We want to just get redirect url but not to follow it.
+      CURLOPT_HEADER => TRUE,    // We'll parse redirect url from header.
+      CURLOPT_RETURNTRANSFER => TRUE,
+      CURLOPT_TIMEOUT => 120,
+      );
+    $allswell = curl_setopt_array($ch, $options);
+    if ($allswell === FALSE) {
+      throw new Exception("get_url failed to set curl options", 1);
+    }
+    $response = curl_exec($ch);
+    preg_match_all('/^Location:(.*)$/mi', $response, $matches);
+    $url2 = !empty($matches[1]) ? trim($matches[1][0]) : 'No redirect found';
+    curl_close($ch);
+
+    $extension = pathinfo($url2, PATHINFO_EXTENSION);
+    if (!empty($extension) || $require_extension === FALSE) {
+      return $url2;
+    }
+
+    // $url2 comes back without an extension (eg. .jpg) so get second redirect
+    $ch = curl_init($url2);
+    if ($ch === FALSE) {
+      curl_close($ch);
+      throw new Exception("Bad second request url: $url2", 1);
+    }
+    // re-use curl options
+    $allswell = curl_setopt_array($ch, $options);
+    if ($allswell === FALSE) {
+      throw new Exception("get_url failed to set curl options 2", 1);
+    }
+    $response = curl_exec($ch);
+    curl_close($ch);
+    preg_match_all('/^Location:(.*)$/mi', $response, $matches);
+    if (empty($matches[1])) {
+      throw new Exception("Can't find url for $url", 1);
+    }
+
+    $url_out = trim($matches[1][0]);
+    return $url_out;
+  }
+
 }
