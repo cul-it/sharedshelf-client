@@ -362,7 +362,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       // how many assets?
       $total = $this->callMethod('projects.assets.count', $project_id);
 
-      $limit = 25;
+      $limit = 5;
       $results = array();
       for ($start = 0; $start < $total; $start += $limit) {
         $result = $this->callMethod('projects.assets', $project_id, $start, $limit);
