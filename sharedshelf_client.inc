@@ -447,7 +447,36 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
     // sometimes the first time gets the url without an extension
     $getfields = http_build_query($params);
     $url = $this->endpoint . "/$path?$getfields";
-    $ch = curl_init($url);
+    $url_list = array();
+    $url_list[] = $url;
+
+    for ($redirects = 0; $this->follow_redirects($url_list); $redirects++) ;
+    $url = end($url_list);
+
+    if ($require_extension) {
+      $extension = pathinfo($url, PATHINFO_EXTENSION);
+      if (empty($extension)) {
+        throw new Exception("Missing required extension: $url", 1);
+      }
+    }
+    return $url;
+  }
+
+  /**
+   * take the last url in the array, if it redirects, add new url to array
+   * @param  array $url_array urls
+   * @return boolean            return TRUE if last url redirects
+   */
+  private function follow_redirects(&$url_array) {
+    if (!is_array($url_array)) {
+      throw new Exception("follow_redirects array required", 1);
+    }
+    $last_url = end($url_array);
+    if ($last_url === FALSE) {
+      throw new Exception("follow_redirects empty array", 1);
+    }
+
+    $ch = curl_init($last_url);
     if ($ch === FALSE) {
       curl_close($ch);
       throw new Exception("Bad request url in get_url: $url", 1);
