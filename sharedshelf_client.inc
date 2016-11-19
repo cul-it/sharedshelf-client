@@ -321,7 +321,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           // Returns URL for full sized image
           // expects $method_params = array( {asset id - (ssid)} )
           $asset_id = $method_params[0];
-          $result = $this->get_url("assets/$asset_id/representation", $params);
+          $result = $this->get_url("assets/$asset_id/representation", $params, TRUE);
           break;
         case 'asset.thumbnail':
           // Returns URL for reduced sized image
@@ -332,7 +332,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
           if ($size < 0 || $size > 4) {
             throw new Exception("Invalid thumbnail size: $size. Must be one of 0,1,2,3,4");
           }
-          $result = $this->get_url("representation/$asset_id/size/$size", $params);
+          $result = $this->get_url("representation/$asset_id/size/$size", $params, TRUE);
           break;
         case 'feeds.assets':
           // construct a list of assets suitable for feeds
@@ -447,7 +447,36 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
     // sometimes the first time gets the url without an extension
     $getfields = http_build_query($params);
     $url = $this->endpoint . "/$path?$getfields";
-    $ch = curl_init($url);
+    $url_list = array();
+    $url_list[] = $url;
+
+    for ($redirects = 0; $this->follow_redirects($url_list); $redirects++) ;
+    $url = end($url_list);
+
+    if ($require_extension) {
+      $extension = pathinfo($url, PATHINFO_EXTENSION);
+      if (empty($extension)) {
+        throw new Exception("Missing required extension: $url", 1);
+      }
+    }
+    return $url;
+  }
+
+  /**
+   * take the last url in the array, if it redirects, add new url to array
+   * @param  array $url_array urls
+   * @return boolean            return TRUE if last url redirects
+   */
+  private function follow_redirects(&$url_array) {
+    if (!is_array($url_array)) {
+      throw new Exception("follow_redirects array required", 1);
+    }
+    $last_url = end($url_array);
+    if ($last_url === FALSE) {
+      throw new Exception("follow_redirects empty array", 1);
+    }
+
+    $ch = curl_init($last_url);
     if ($ch === FALSE) {
       curl_close($ch);
       throw new Exception("Bad request url in get_url: $url", 1);
@@ -463,38 +492,20 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       );
     $allswell = curl_setopt_array($ch, $options);
     if ($allswell === FALSE) {
-      throw new Exception("get_url failed to set curl options", 1);
+      throw new Exception("follow_redirects failed to set curl options", 1);
     }
     $response = curl_exec($ch);
-    preg_match_all('/^Location:(.*)$/mi', $response, $matches);
-    $url2 = !empty($matches[1]) ? trim($matches[1][0]) : 'No redirect found';
-    curl_close($ch);
-
-    $extension = pathinfo($url2, PATHINFO_EXTENSION);
-    if (!empty($extension) || $require_extension === FALSE) {
-      return $url2;
-    }
-
-    // $url2 comes back without an extension (eg. .jpg) so get second redirect
-    $ch = curl_init($url2);
-    if ($ch === FALSE) {
-      curl_close($ch);
-      throw new Exception("Bad second request url: $url2", 1);
-    }
-    // re-use curl options
-    $allswell = curl_setopt_array($ch, $options);
-    if ($allswell === FALSE) {
-      throw new Exception("get_url failed to set curl options 2", 1);
-    }
-    $response = curl_exec($ch);
-    curl_close($ch);
     preg_match_all('/^Location:(.*)$/mi', $response, $matches);
     if (empty($matches[1])) {
-      throw new Exception("Can't find url for $url", 1);
+      $redirected = FALSE;
     }
+    else {
+      $redirected = TRUE;
+      $url_array[] = trim($matches[1][0]); // append the url redirected to to the array
+    }
+    curl_close($ch);
 
-    $url_out = trim($matches[1][0]);
-    return $url_out;
+    return $redirected;
   }
 
 }
