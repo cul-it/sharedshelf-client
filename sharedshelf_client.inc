@@ -450,8 +450,16 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
     $url_list = array();
     $url_list[] = $url;
 
-    for ($redirects = 0; $this->follow_redirects($url_list); $redirects++) ;
+    $ch = curl_init();
+    if ($ch === FALSE) {
+      curl_close($ch);
+      throw new Exception("Bad request url in get_url: $url", 1);
+    }
+
+    for ($redirects = 0; $this->follow_redirects($ch, $url_list); $redirects++) ;
     $url = end($url_list);
+
+    curl_close($ch);
 
     if ($require_extension) {
       $extension = pathinfo($url, PATHINFO_EXTENSION);
@@ -467,7 +475,7 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
    * @param  array $url_array urls
    * @return boolean            return TRUE if last url redirects
    */
-  private function follow_redirects(&$url_array) {
+  private function follow_redirects(&$ch, &$url_array) {
     if (!is_array($url_array)) {
       throw new Exception("follow_redirects array required", 1);
     }
@@ -476,12 +484,8 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       throw new Exception("follow_redirects empty array", 1);
     }
 
-    $ch = curl_init($last_url);
-    if ($ch === FALSE) {
-      curl_close($ch);
-      throw new Exception("Bad request url in get_url: $url", 1);
-    }
     $options = array(
+      CURLOPT_URL => $last_url,
       CURLOPT_CONNECTTIMEOUT => 120,
       CURLOPT_COOKIEFILE =>  $this->cookie_file, /* make sure you provide FULL PATH to cookie files*/
       CURLOPT_COOKIEJAR => $this->cookie_jar_file,
@@ -503,7 +507,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       $redirected = TRUE;
       $url_array[] = trim($matches[1][0]); // append the url redirected to to the array
     }
-    curl_close($ch);
 
     return $redirected;
   }
