@@ -484,12 +484,8 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       throw new Exception("follow_redirects empty array", 1);
     }
 
-    $ch = curl_init($last_url);
-    if ($ch === FALSE) {
-      curl_close($ch);
-      throw new Exception("Bad request url in get_url: $url", 1);
-    }
     $options = array(
+      CURLOPT_URL => $last_url,
       CURLOPT_CONNECTTIMEOUT => 120,
       CURLOPT_COOKIEFILE =>  $this->cookie_file, /* make sure you provide FULL PATH to cookie files*/
       CURLOPT_COOKIEJAR => $this->cookie_jar_file,
@@ -511,7 +507,6 @@ class clients_connection_sharedshelf_client extends clients_connection_base {
       $redirected = TRUE;
       $url_array[] = trim($matches[1][0]); // append the url redirected to to the array
     }
-    curl_close($ch);
 
     return $redirected;
   }
